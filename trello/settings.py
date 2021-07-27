@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'djoser',
     'users',
 ]
 
@@ -74,6 +76,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'trello.wsgi.application'
 
 
@@ -104,6 +107,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'users.User'
+
+DJOSER = {
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SEND_ACTIVATION_EMAIL': True,
+    'ACTIVATION_URL': '#/activate/{uid}/{token}'
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
