@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import environ
 import os
+
+import environ
 
 
 env = environ.Env(
@@ -44,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'djoser',
     'users',
 ]
 
@@ -108,11 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.User'
 
-DJOSER = {
-    'USER_CREATE_PASSWORD_RETYPE': True,
-    'SEND_ACTIVATION_EMAIL': True,
-    'ACTIVATION_URL': '#/activate/{uid}/{token}'
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
