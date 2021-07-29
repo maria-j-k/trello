@@ -124,7 +124,7 @@ EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-MAIL_INFO=env('MAIL_INFO')
+MAIL_INFO = env('MAIL_INFO')
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

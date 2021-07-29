@@ -6,6 +6,7 @@ from rest_framework.reverse import reverse
 
 from users.models import User
 from users.serializers import UserSerializer
+from users.utils import send_activation_link
 
 
 @api_view(['GET'])
@@ -26,10 +27,9 @@ class UserViewSet(viewsets.ModelViewSet):
         if user:
             token = default_token_generator.make_token(user)
             activation_link = 'activate/?user_id={}&token={}'.format(
-                    user.id, token)
-            print(activation_link)
+                              user.id, token)
             url = request.build_absolute_uri(activation_link)
-            print(url)
+            send_activation_link(request, user, url)
         else:
             print('You need to provide a valid email address.')
         return response
@@ -42,8 +42,6 @@ class UserViewSet(viewsets.ModelViewSet):
             user = self.get_queryset().get(pk=user_id)
         except(TypeError, ValueError,  User.DoesNotExist):
             user = None
-        print(f'activate: user is {user}')
-        print(f'activate: token is {confirmation_token}')
         if user is None:
             return Response('User not found',
                             status=status.HTTP_400_BAD_REQUEST)
