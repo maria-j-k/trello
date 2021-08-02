@@ -1,4 +1,6 @@
+import logging
 from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
@@ -7,6 +9,9 @@ from rest_framework.reverse import reverse
 from users.models import User
 from users.serializers import UserSerializer
 from users.utils import send_activation_link
+
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['GET'])
@@ -21,34 +26,35 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
-        response = super().create(request)
-        email = request.data.get('email', '')
-        user = User.objects.get(email=email)
-        if user:
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            headers = self.get_success_headers(serializer.data)
             token = default_token_generator.make_token(user)
             activation_link = 'activate/?user_id={}&token={}'.format(
                               user.id, token)
             url = request.build_absolute_uri(activation_link)
             send_activation_link(request, user, url)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED,
+                            headers=headers)
         else:
-            print('You need to provide a valid email address.')
-        return response
+            logger.error('Somebody has entered an invalid email!')
+            return Response('You need to provide a valid email address',
+                            status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['GET'])
     def activate(self, request):
         user_id = request.query_params.get('user_id', '')
+        serializer = self.get_serializer(data={'id': 'user_id'})
+        serializer.is_valid(raise_exception=True)
         confirmation_token = request.query_params.get('token', '')
-        try:
-            user = self.get_queryset().get(pk=user_id)
-        except(TypeError, ValueError,  User.DoesNotExist):
-            user = None
-        if user is None:
-            return Response('User not found',
-                            status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(self.get_queryset(), pk=user_id)
         if not default_token_generator.check_token(user, confirmation_token):
             return Response('''Token is invalid or expired.
             Please request another confirmation email by signing in.''',
                             status=status.HTTP_400_BAD_REQUEST)
         user.is_active = True
         user.save()
-        return Response('Email successfully confirmed')
+        return Response('Email successfully confirmed',
+                        status=status.HTTP_200_OK)
