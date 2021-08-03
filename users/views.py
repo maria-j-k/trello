@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import EmailValidSerializer, UserSerializer
 from users.utils import send_activation_link
 
 
@@ -45,15 +45,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def activate(self, request):
-        user_id = request.query_params.get('user_id', '')
-        user_id = serializers.IntegerField().to_internal_value(data=user_id) 
-        confirmation_token = request.query_params.get('token', '')
-        user = get_object_or_404(self.get_queryset(), pk=user_id)
-        if not default_token_generator.check_token(user, confirmation_token):
-            return Response('''Token is invalid or expired.
-            Please request another confirmation email by signing in.''',
-                            status=status.HTTP_400_BAD_REQUEST)
-        user.is_active = True
-        user.save(update_fields=['is_active'])
+        data = {
+                'user_id': request.query_params['user_id'],
+                'token': request.query_params['token']
+                }
+        serializer = EmailValidSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response('Email successfully confirmed',
                         status=status.HTTP_200_OK)
