@@ -143,14 +143,12 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
-            'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/warning.log'),
+        'console': {
+            'class': 'logging.StreamHandler',
         },
     },
     'root': {
-        'handlers': ['file'],
+        'handlers': ['console'],
         'level': 'WARNING',
     },
 }
