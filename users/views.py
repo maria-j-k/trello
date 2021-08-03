@@ -1,7 +1,7 @@
 import logging
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -46,8 +46,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def activate(self, request):
         user_id = request.query_params.get('user_id', '')
-        serializer = self.get_serializer(data={'id': 'user_id'})
-        serializer.is_valid(raise_exception=True)
+        user_id = serializers.IntegerField().to_internal_value(data=user_id) 
         confirmation_token = request.query_params.get('token', '')
         user = get_object_or_404(self.get_queryset(), pk=user_id)
         if not default_token_generator.check_token(user, confirmation_token):
