@@ -54,6 +54,6 @@ class UserViewSet(viewsets.ModelViewSet):
             Please request another confirmation email by signing in.''',
                             status=status.HTTP_400_BAD_REQUEST)
         user.is_active = True
-        user.save()
+        user.save(update_fields=['is_active'])
         return Response('Email successfully confirmed',
                         status=status.HTTP_200_OK)
