@@ -1,11 +1,10 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
 from users.managers import UserManager
 
 
-class User(AbstractUser):
-    username = None
+class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email_address',
                               max_length=255,
                               unique=True)
