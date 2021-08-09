@@ -45,3 +45,9 @@ class EmailValidSerializer(serializers.Serializer):
         instance.is_active = True
         instance.save(update_fields=['is_active'])
         return instance
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['pk', 'email', 'last_login', 'is_active']
