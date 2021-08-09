@@ -223,6 +223,8 @@ cython_debug/
 [._]ss[a-gi-z]
 [._]sw[a-p]
 
+### VSCode ###
+.vscode/
 # Session
 Session.vim
 Sessionx.vim
