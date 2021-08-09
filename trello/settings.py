@@ -156,6 +156,7 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -187,6 +188,8 @@ SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['email']
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('GOOGLE_CLIENT_ID')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('GOOGLE_SECRET_KEY')
 
+SOCIAL_AUTH_GITHUB_KEY = env('GITHUB_CLIENT_ID')
+SOCIAL_AUTH_GITHUB_SECRET = env('GITHUB_SECRET_KEY')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
