@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -5,11 +6,22 @@ from rest_framework.response import Response
 from projects.models import Project
 from projects.serializers import (ProjectAssignSerializer,
                                   ProjectCreateSerializer)
+from users.permissions import IsAccountOwner
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectCreateSerializer
+    permissions_classes = [IsAccountOwner]
+
+    def get_queryset(self):
+        """
+        This view should return a list of all projects where current user
+        is an owner or a collaborator
+        """
+        user = self.request.user
+        qs = Project.objects.filter(Q(owner=user) | Q(coworker=user))
+        return qs
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
