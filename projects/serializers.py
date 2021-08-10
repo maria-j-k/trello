@@ -8,21 +8,33 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['id', 'owner', 'name']
-        read_only_fields = ['id', 'owner']
+        fields = ['id', 'name', 'owner', 'coworker']
+        read_only_fields = ['id', 'owner', 'coworker']
 
 
 class ProjectAssignSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(
+    owner = serializers.StringRelatedField(read_only=True)
+    coworker = serializers.PrimaryKeyRelatedField(
             queryset=get_user_model().objects.all())
 
     class Meta:
         model = Project
-        fields = ['id', 'name', 'owner']
-        read_only_fields = ['id', 'name']
+        fields = ['id', 'name', 'owner', 'coworker']
+        read_only_fields = ['id', 'name', 'owner']
+
+    def validate_coworker(self, value):
+        """
+        Check if the coworker has an active account.
+        """
+        if not value.is_active:
+            raise serializers.ValidationError("This account is not active yet")
+        return value
 
     def update(self, instance, validated_data):
-        owner = validated_data.pop('owner', None)
-        instance.owner_id = owner
-        instance.save(update_fields=['owner'])
+        coworker = validated_data.pop('coworker', None)
+        if coworker.id == instance.owner.id:
+            raise serializers.ValidationError(
+                    "You cannot collaborate with yourself.")
+        instance.coworker = coworker
+        instance.save(update_fields=['coworker'])
         return instance
