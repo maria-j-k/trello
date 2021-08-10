@@ -8,8 +8,8 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['id', 'name', 'owner']
-        read_only_fields = ['id', 'owner']
+        fields = ['id', 'name', 'owner', 'created_date']
+        read_only_fields = ['id', 'owner', 'created_date']
 
 
 class ProjectAssignSerializer(serializers.ModelSerializer):
