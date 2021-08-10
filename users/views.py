@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
+        'projects': reverse('projects:project-list',
+                            request=request, format=format),
         'users': reverse('users:user_list', request=request, format=format),
     })
 
