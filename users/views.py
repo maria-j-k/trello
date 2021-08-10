@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from users.models import User
-from users.serializers import EmailValidSerializer, UserSerializer
+from users.serializers import (EmailValidSerializer, UserDetailSerializer,
+                               UserSerializer)
 from users.utils import send_activation_link
 
 
@@ -55,3 +56,9 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response('Email successfully confirmed',
                         status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['GET'])
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserDetailSerializer(instance)
+        return Response(serializer.data)
