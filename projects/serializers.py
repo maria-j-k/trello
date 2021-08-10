@@ -4,6 +4,8 @@ from projects.models import Project
 
 
 class ProjectCreateSerializer(serializers.ModelSerializer):
+    owner = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = Project
         fields = ['id', 'owner', 'name']
