@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -23,8 +24,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_anonymous:
             return Project.objects.none()
-        qs = Project.objects.filter(Q(owner=user) | Q(coworker=user))
-        return qs
+        return Project.objects.filter(Q(owner=user) | Q(coworkers__in=[user]))
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -39,7 +39,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['PATCH'])
     def assign(self, request, pk):
-        project = Project.objects.get(pk=pk)
+        project = get_object_or_404(Project, pk=pk)
         serializer = ProjectAssignSerializer(project,
                                              data=request.data,
                                              partial=True)
