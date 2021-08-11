@@ -6,7 +6,8 @@ class Project(models.Model):
     name = models.CharField(max_length=100)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               related_name='owned_projects',
-                              on_delete=models.CASCADE)
+                              on_delete=models.CASCADE,
+                              blank=True, null=True)
     coworkers = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                        related_name='co_projects',
                                        blank=True)
@@ -37,9 +38,10 @@ class Issue(models.Model):
                                 blank=True, null=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               related_name='owned_issues',
-                              on_delete=models.CASCADE)
+                              on_delete=models.CASCADE,
+                              blank=True, null=True)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL,
                                  related_name='issues',
                                  on_delete=models.CASCADE,
                                  blank=True, null=True)
-    status = models.IntegerField(choices=STATUS_CHOICES, null=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=TODO)
