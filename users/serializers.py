@@ -51,8 +51,10 @@ class EmailValidSerializer(serializers.Serializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     owned_projects = serializers.StringRelatedField(many=True)
     co_projects = serializers.StringRelatedField(many=True)
+    owned_issues = serializers.StringRelatedField(many=True)
+    issues = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = get_user_model()
-        fields = ['pk', 'email', 'last_login', 'is_active',
-                  'owned_projects', 'co_projects']
+        fields = ['pk', 'email', 'last_login', 'is_active', 'owned_projects', 
+                'co_projects', 'owned_issues', 'issues']
