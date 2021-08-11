@@ -14,7 +14,7 @@ class Project(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.id}: {self.name}'
 
 
 class Issue(models.Model):
@@ -45,3 +45,6 @@ class Issue(models.Model):
                                  on_delete=models.CASCADE,
                                  blank=True, null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=TODO)
+
+    def __str__(self):
+        return f'{self.id}: {self.title}'
