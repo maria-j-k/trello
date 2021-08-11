@@ -11,7 +11,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'password']
+        fields = ['id', 'email', 'password']
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         return get_user_model().objects.create_user(**validated_data)
@@ -45,3 +46,13 @@ class EmailValidSerializer(serializers.Serializer):
         instance.is_active = True
         instance.save(update_fields=['is_active'])
         return instance
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    owned_projects = serializers.StringRelatedField(many=True)
+    co_projects = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ['pk', 'email', 'last_login', 'is_active',
+                  'owned_projects', 'co_projects']
