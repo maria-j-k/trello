@@ -2,6 +2,7 @@ from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from projects.models import Project
 from projects.serializers import (ProjectAssignSerializer,
@@ -12,7 +13,7 @@ from users.permissions import IsAccountOwner
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectCreateSerializer
-    permissions_classes = [IsAccountOwner]
+    permissions_classes = [IsAuthenticated, IsAccountOwner]
 
     def get_queryset(self):
         """
@@ -20,6 +21,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         is an owner or a collaborator
         """
         user = self.request.user
+        if user.is_anonymous:
+            return Project.objects.none()
         qs = Project.objects.filter(Q(owner=user) | Q(coworker=user))
         return qs
 
