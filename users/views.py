@@ -1,5 +1,4 @@
 import logging
-from django.contrib.auth.tokens import default_token_generator
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
@@ -32,11 +31,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             user = serializer.save()
             headers = self.get_success_headers(serializer.data)
-            token = default_token_generator.make_token(user)
-            activation_link = 'activate/?user_id={}&token={}'.format(
-                              user.id, token)
-            url = request.build_absolute_uri(activation_link)
-            send_activation_link(request, user, url)
+            send_activation_link(request, user)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED,
                             headers=headers)
