@@ -9,8 +9,8 @@ from projects.serializers import (IssueSerializer,
                                   ProjectAssignSerializer,
                                   ProjectCreateSerializer)
 from projects.permissions import (IsAssignedToIssue,
-                                  IsAssignedToProject,
                                   IsOwner)
+from projects.utils import send_info_mails
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -56,18 +56,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions.
-        """
-        if self.action == 'list':
-            permission_classes = [IsAssignedToProject]
-        elif self.action == 'partial_update':
-            permission_classes = [IsAssignedToIssue]
-        else:
-            permission_classes = [IsAssignedToProject]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAssignedToIssue]
 
     def get_queryset(self):
         """
@@ -92,12 +81,14 @@ class IssueViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['PATCH'])
     def assign(self, request, project_pk, pk):
         issue = get_object_or_404(Issue, pk=pk)
+        previous = issue.assignee
         serializer = IssueSerializer(issue,
                                      data=request.data,
                                      partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         headers = self.get_success_headers(serializer.data)
+        send_info_mails(request, issue, previous)
         return Response('Issue successfully assigned',
                         status=status.HTTP_200_OK,
                         headers=headers)

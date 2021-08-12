@@ -25,4 +25,3 @@ def make_activation_url(request, user):
     activation_link = 'activate/?user_id={}&token={}'.format(
                       user.id, token)
     return request.build_absolute_uri(activation_link)
-

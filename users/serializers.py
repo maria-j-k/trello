@@ -56,5 +56,5 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['pk', 'email', 'last_login', 'is_active', 'owned_projects', 
-                'co_projects', 'owned_issues', 'issues']
+        fields = ['pk', 'email', 'last_login', 'is_active', 'owned_projects',
+                  'co_projects', 'owned_issues', 'issues']
