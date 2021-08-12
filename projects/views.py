@@ -10,8 +10,7 @@ from projects.serializers import (IssueSerializer,
                                   ProjectCreateSerializer)
 from projects.permissions import (IsAssignedToIssue,
                                   IsAssignedToProject,
-                                  IsOwner,
-                                  IsPO)
+                                  IsOwner)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -67,7 +66,7 @@ class IssueViewSet(viewsets.ModelViewSet):
         elif self.action == 'partial_update':
             permission_classes = [IsAssignedToIssue]
         else:
-            permission_classes = [IsPO]
+            permission_classes = [IsAssignedToProject]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
