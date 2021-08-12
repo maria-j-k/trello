@@ -1,5 +1,8 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+
+from projects.managers import IssueManager
 
 
 class Project(models.Model):
@@ -46,5 +49,13 @@ class Issue(models.Model):
                                  blank=True, null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=TODO)
 
+    objects = IssueManager()
+
     def __str__(self):
         return f'{self.id}: {self.title}'
+
+    def overdue(self):
+        difference = timezone.now().date() - self.due_date
+        if difference.days < 0:
+            return None
+        return difference.days
