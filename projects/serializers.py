@@ -1,3 +1,4 @@
+from datetime import date
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from rest_framework import serializers
@@ -53,6 +54,6 @@ class IssueSerializer(serializers.ModelSerializer):
         """
         Ensures that the due date is not in the past
         """
-        if value <= timezone.now():
+        if value <= timezone.now().date():
             raise serializers.ValidationError("Due date cannot be past date.")
         return value

@@ -3,20 +3,21 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 from projects.models import Issue, Project
 from projects.serializers import (IssueSerializer,
                                   ProjectAssignSerializer,
                                   ProjectCreateSerializer)
-from projects.permissions import (IsOwner, IsAssignedToProject,
-                                  IsAssignedToIssue)
+from projects.permissions import (IsAssignedToIssue,
+                                  IsAssignedToProject,
+                                  IsOwner,
+                                  IsPO)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectCreateSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsOwner]
 
     def get_queryset(self):
         """
@@ -66,7 +67,7 @@ class IssueViewSet(viewsets.ModelViewSet):
         elif self.action == 'partial_update':
             permission_classes = [IsAssignedToIssue]
         else:
-            permission_classes = [IsOwner]
+            permission_classes = [IsPO]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
@@ -101,8 +102,3 @@ class IssueViewSet(viewsets.ModelViewSet):
         return Response('Issue successfully assigned',
                         status=status.HTTP_200_OK,
                         headers=headers)
-    # list - Is assinged to project or issue
-    # create is owner
-    # assign is owner
-    # update is owner or is assigned to issue
-    # delete is owner
