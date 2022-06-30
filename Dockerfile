@@ -1,17 +1,11 @@
 FROM python:3
-RUN apt-get update \
-    && apt-get install -y postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y build-essential python3-dev libldap2-dev libsasl2-dev
 
-RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN mkdir /code
 
-RUN useradd -u 1000 -m python
-USER python
-
-ENV PYTHONUNBUFFERED=1
+RUN pip3 install pip==21.2.3
+COPY requirements.txt /code/
+RUN pip3 install -r /code/requirements.txt
 
 WORKDIR /code
-COPY requirements.txt /code/
-
-RUN pip install -r requirements.txt
 COPY . /code/

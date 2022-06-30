@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from users.models import User
-from users.serializers import EmailValidSerializer, UserSerializer
+from users.serializers import (EmailValidSerializer, UserDetailSerializer,
+                               UserSerializer)
 from users.utils import send_activation_link
 
 
@@ -16,6 +17,8 @@ logger = logging.getLogger(__name__)
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
+        'projects': reverse('projects:project-list',
+                            request=request, format=format),
         'users': reverse('users:user_list', request=request, format=format),
     })
 
@@ -53,3 +56,9 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response('Email successfully confirmed',
                         status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['GET'])
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserDetailSerializer(instance)
+        return Response(serializer.data)
